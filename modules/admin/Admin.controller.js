@@ -10,7 +10,7 @@ exports.secure = async function (req, res, next) {
 
     let token = req.headers.authorization;
 
-    let checkToken = jwt.verify(token, process.env.SECRET_KEY);
+    let checkToken = jwt.verify(token, process.env.SECRET_KEY_ADMIN);
     if (!checkToken || !checkToken.id) {
       throw new Error("Token is not valid");
     }
@@ -72,7 +72,7 @@ exports.login = async function (req, res, next) {
       throw new Error("Please enter valid password");
     }
 
-    let token = jwt.sign({ id: checkAdmin.id }, process.env.SECRET_KEY);
+    let token = jwt.sign({ id: checkAdmin.id }, process.env.SECRET_KEY_ADMIN);
 
     res.status(200).json({
       status: "success",
