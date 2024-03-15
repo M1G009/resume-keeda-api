@@ -11,6 +11,11 @@ const ThemeSchema = new Schema(
       type: String,
       required: [true, "Please enter image"],
     },
+    index: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
   },
   { timestamps: true }
 );

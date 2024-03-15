@@ -24,7 +24,12 @@ exports.updateTheme = async function (req, res, next) {
     let data;
     let message = "";
     if (!updateId) {
-      if (!req.file || !req.file.filename || !req.body.name) {
+      if (
+        !req.file ||
+        !req.file.filename ||
+        !req.body.name ||
+        !req.body.index
+      ) {
         throw new Error("Please enter valid fields");
       }
 
