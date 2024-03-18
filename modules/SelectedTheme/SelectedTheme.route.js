@@ -15,6 +15,10 @@ router.post(
   UserController.secure,
   SelectedThemeController.selectedTheme
 );
-router.post("/", UserController.secure, SelectedThemeController.selectedTheme);
+router.post(
+  "/",
+  UserController.secure,
+  SelectedThemeController.createUpdateThemeSelect
+);
 
 module.exports = router;

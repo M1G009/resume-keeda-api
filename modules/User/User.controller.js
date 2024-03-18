@@ -11,7 +11,6 @@ exports.secure = async function (req, res, next) {
     let token = req.headers.authorization;
 
     let checkToken = jwt.verify(token, process.env.SECRET_KEY_ADMIN);
-    console.log(checkToken);
     if (!checkToken || !checkToken.id) {
       throw new Error("Token is not valid");
     }

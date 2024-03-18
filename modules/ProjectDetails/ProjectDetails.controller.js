@@ -26,8 +26,6 @@ exports.updateProjectDetails = async function (req, res, next) {
     let data;
     let message = "";
 
-    // console.log(req.files);
-
     if (!updateId) {
       if (!req.body.title) {
         if (req.files && req.files.images && req.files.images.length) {
@@ -56,7 +54,6 @@ exports.updateProjectDetails = async function (req, res, next) {
           return images.push(el.filename);
         });
       }
-      console.log(images);
       data = await PROJECTDETAILS.create({
         ...req.body,
         images,

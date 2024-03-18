@@ -38,10 +38,13 @@ exports.selectedTheme = async function (req, res, next) {
   }
 };
 
-exports.deleteSelectedTheme = async function (req, res, next) {
+exports.createUpdateThemeSelect = async function (req, res, next) {
   try {
-    let deleteId = req.params.deleteId;
-    await SelectedTheme.findByIdAndDelete(deleteId);
+    await SelectedTheme.create({
+      user: req.userId,
+      theme: req.body.theme,
+      slug: req.body.slug,
+    });
 
     res.status(200).json({
       status: "success",
