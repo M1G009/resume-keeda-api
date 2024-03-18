@@ -1,4 +1,5 @@
 const SelectedTheme = require("./SelectedTheme.model");
+const mongoose = require("mongoose");
 
 // SelectedTheme
 exports.getSelectedTheme = async function (req, res, next) {
@@ -9,6 +10,117 @@ exports.getSelectedTheme = async function (req, res, next) {
       status: "success",
       message: "Data found successfull",
       data,
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+
+exports.getSlugTheme = async function (req, res, next) {
+  try {
+    const userData = await SelectedTheme.aggregate([
+      { $match: { slug: req.params.slug } },
+      {
+        $lookup: {
+          from: "educationsdetails",
+          localField: "user",
+          foreignField: "userId",
+          as: "educationsdetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "awardsandcertificates",
+          localField: "user",
+          foreignField: "userId",
+          as: "awardsandcertificates",
+        },
+      },
+      {
+        $lookup: {
+          from: "personaldetails",
+          localField: "user",
+          foreignField: "userId",
+          as: "personaldetail",
+        },
+      },
+      {
+        $lookup: {
+          from: "professionaldetails",
+          localField: "user",
+          foreignField: "userId",
+          as: "professionaldetail",
+        },
+      },
+      {
+        $lookup: {
+          from: "projects",
+          localField: "user",
+          foreignField: "userId",
+          as: "projects",
+        },
+      },
+      {
+        $lookup: {
+          from: "skills",
+          localField: "user",
+          foreignField: "userId",
+          as: "skills",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "users",
+        },
+      },
+      {
+        $lookup: {
+          from: "workexperiences",
+          localField: "user",
+          foreignField: "userId",
+          as: "workexperiences",
+        },
+      },
+    ]);
+
+    // Since aggregate returns an array, we extract the first element (if any)
+    const UserDetails = userData[0] || null;
+
+    // If UserDetails exists and education is an array, extract the first element
+    if (
+      UserDetails &&
+      Array.isArray(UserDetails.personaldetail) &&
+      UserDetails.personaldetail.length > 0
+    ) {
+      UserDetails.personaldetail = UserDetails.personaldetail[0];
+    }
+
+    if (
+      UserDetails &&
+      Array.isArray(UserDetails.professionaldetail) &&
+      UserDetails.professionaldetail.length > 0
+    ) {
+      UserDetails.professionaldetail = UserDetails.professionaldetail[0];
+    }
+
+    if (
+      UserDetails &&
+      Array.isArray(UserDetails.users) &&
+      UserDetails.users.length > 0
+    ) {
+      UserDetails.users = UserDetails.users[0];
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Data found successfull",
+      data: UserDetails,
     });
   } catch (err) {
     res.status(404).json({
@@ -40,11 +152,17 @@ exports.selectedTheme = async function (req, res, next) {
 
 exports.createUpdateThemeSelect = async function (req, res, next) {
   try {
-    await SelectedTheme.create({
-      user: req.userId,
-      theme: req.body.theme,
-      slug: req.body.slug,
-    });
+    await SelectedTheme.findOneAndUpdate(
+      {
+        user: req.userId,
+      },
+      {
+        user: req.userId,
+        theme: req.body.theme,
+        slug: req.body.slug,
+      },
+      { upsert: true, new: true }
+    );
 
     res.status(200).json({
       status: "success",

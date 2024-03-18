@@ -26,6 +26,7 @@ exports.updateProfessionalDetails = async function (req, res, next) {
     if (!updateId) {
       if (
         !req.body.Profession ||
+        !req.body.Object ||
         !req.body.Qualification ||
         !req.body.languageKnown ||
         !req.body.yearsOfExperience

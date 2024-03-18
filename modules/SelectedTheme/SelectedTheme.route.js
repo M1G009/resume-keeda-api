@@ -10,11 +10,15 @@ router.get(
   UserController.secure,
   SelectedThemeController.getSelectedTheme
 );
+
+router.get("/:slug", SelectedThemeController.getSlugTheme);
+
 router.post(
   "/checkurl",
   UserController.secure,
   SelectedThemeController.selectedTheme
 );
+
 router.post(
   "/",
   UserController.secure,
