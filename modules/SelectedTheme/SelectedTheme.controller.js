@@ -1,5 +1,4 @@
 const SelectedTheme = require("./SelectedTheme.model");
-const mongoose = require("mongoose");
 
 // SelectedTheme
 exports.getSelectedTheme = async function (req, res, next) {
@@ -87,6 +86,14 @@ exports.getSlugTheme = async function (req, res, next) {
           as: "workexperiences",
         },
       },
+      {
+        $lookup: {
+          from: "themes",
+          localField: "theme",
+          foreignField: "_id",
+          as: "theme",
+        },
+      },
     ]);
 
     // Since aggregate returns an array, we extract the first element (if any)
@@ -115,6 +122,14 @@ exports.getSlugTheme = async function (req, res, next) {
       UserDetails.users.length > 0
     ) {
       UserDetails.users = UserDetails.users[0];
+    }
+
+    if (
+      UserDetails &&
+      Array.isArray(UserDetails.theme) &&
+      UserDetails.theme.length > 0
+    ) {
+      UserDetails.theme = UserDetails.theme[0];
     }
 
     res.status(200).json({
